@@ -1,0 +1,35 @@
+CREATE OR REFRESH STREAMING TABLE mgnrega_analytics.mgnrega_silver.mgnrega_transformation_silver
+AS
+SELECT 
+  fin_year AS financial_year,
+  month,
+  CAST(state_code AS INT) AS state_code,
+  initcap(state_name) AS state_name,
+  CAST(district_code AS INT) AS district_code,
+  initcap(district_name) AS district_name,
+  MAX(CAST(Approved_Labour_Budget AS INT)) AS approved_labour_budget,
+  MAX(CAST(Total_No_of_Workers AS INT)) AS total_no_of_workers,
+  MAX(CAST(Total_No_of_Active_Workers AS INT)) AS total_no_of_active_workers,
+  MAX(CAST(Total_No_of_JobCards_issued AS INT)) AS total_no_of_jobcards_issued,
+  MAX(CAST(Total_No_of_Active_Job_Cards AS INT)) AS total_no_of_active_job_cards,
+  MAX(CAST(Total_Households_Worked AS INT)) AS total_households_worked,
+  MAX(CAST(Total_Individuals_Worked AS INT)) AS total_individuals_worked,
+  MAX(CAST(Average_days_of_employment_provided_per_Household AS INT)) AS average_days_of_employment_provided_per_household,
+  ROUND(MAX(CAST(Average_Wage_rate_per_day_per_person AS FLOAT)),2) AS average_wage_rate_per_day_per_person,
+  MAX(CAST(Total_No_of_HHs_completed_100_Days_of_Wage_Employment AS INT)) AS total_households_completed_100_days_work,
+  MAX(CAST(SC_persondays AS INT)) AS total_SC_persons_worked_days,
+  MAX(CAST(SC_workers_against_active_workers AS INT)) AS SC_workers_against_active_workers,
+  MAX(CAST(ST_persondays AS INT)) AS total_ST_persons_worked_days,
+  MAX(CAST(ST_workers_against_active_workers AS INT)) AS ST_workers_against_active_workers,
+  MAX(CAST(Women_Persondays AS INT)) AS total_women_persons_worked_days,
+  ROUND(MAX(CAST(Material_and_skilled_Wages AS FLOAT)),2) AS material_and_skilled_wages_bill,
+  ROUND(MAX(CAST(Total_Adm_Expenditure AS FLOAT)),2) AS total_administrative_expenses,
+  ROUND(MAX(CAST(Wages AS FLOAT)),2) AS total_wages_bill,
+  ROUND(MAX(CAST(Total_Exp AS FLOAT)),2) AS total_expenses,
+  MAX(CAST(Total_No_of_Works_Takenup AS INT)) AS total_no_of_works_takenup,
+  MAX(CAST(Number_of_Ongoing_Works AS INT)) AS number_of_ongoing_works,
+  MAX(CAST(Number_of_Completed_Works AS INT)) AS number_of_completed_works,
+  MAX(CAST(Number_of_GPs_with_NIL_exp AS INT)) AS no_of_GP_with_no_work,
+  MAX(CAST(Differently_abled_persons_worked AS INT)) AS differently_abled_persons_worked
+FROM STREAM(mgnrega_analytics.mgnrega_broonze.data_ingestion_broonze)
+GROUP BY fin_year, month, state_code, state_name, district_code, district_name;
